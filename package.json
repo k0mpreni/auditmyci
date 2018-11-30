@@ -1,0 +1,8 @@
+{
+  "name": "auditci",
+  "version": "1.0.0",
+  "description": "Tool to audit dependencies in your CI",
+  "main": "index.js",
+  "author": "Alex Labonne",
+  "license": "MIT"
+}
