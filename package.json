@@ -1,8 +1,18 @@
 {
-  "name": "auditci",
-  "version": "1.0.0",
+  "name": "auditmyci",
+  "version": "1.1.1",
   "description": "Tool to audit dependencies in your CI",
   "main": "index.js",
-  "author": "Alex Labonne",
-  "license": "MIT"
+  "author": "Alex Labonne ",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brainlulz/auditmyci.git"
+  },
+  "bin": {
+    "auditmyci": "./index.js"
+  },
+  "dependencies": {
+    "commander": "^2.19.0"
+  }
 }
