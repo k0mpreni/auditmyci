@@ -13,13 +13,14 @@ const npmFiles =
 const packageManager = npmFiles ? 'npm' : 'yarn';
 
 const program = require('commander')
-  .option('-l, --low [boolean]', 'Exit if there are low or higher vulnerabilities')
-  .option('-m, --moderate [boolean]', 'Exit if there are low or higher vulnerabilities')
-  .option('-hi, --high [boolean]', 'Exit if there are high or critical vulnerabilities')
   .option('-c, --critical [boolean]', 'Exit if there are critical vulnerabilities', {
     isDefault: true
   })
-  .option('-r, --report [boolean]', 'Show the audit report')
+  .option('-h, --high [boolean]', 'Exit if there are high or critical vulnerabilities')
+  .option('-l, --low [boolean]', 'Exit if there are low or higher vulnerabilities')
+  .option('-m, --moderate [boolean]', 'Exit if there are low or higher vulnerabilities')
+  .option('-r, --report [boolean]', 'Show the audit --json report')
+  .option('-s, --succeed [boolean]', 'Let your CI succeed even if there are vulnerabilities')
   .parse(process.argv)
 
 const parseMessage = (output, options = {}) => {
@@ -58,6 +59,11 @@ const parseOutput = output => {
   return JSON.parse(output).metadata.vulnerabilities;
 };
 
+const handleNoVulnerabilities = () => {
+  console.log('\x1b[32m', 'SUCCESS: No vulnerability found for this severity type or above');
+  process.exit(0);
+}
+
 const run = () => {
   if (npmFiles && yarnFiles) {
     console.log(
@@ -65,13 +71,24 @@ const run = () => {
     );
     process.exit(1);
   }
+
   if (!npmFiles && !yarnFiles) {
     console.log(
       'You have no lock file. Either you are not using a package manager or your package manager is not supported yet.'
     );
+    process.exit(1);
   }
-  exec(`${packageManager} audit --json`, function (error, stdout, stderr) {
+
+  exec(`${packageManager} audit --json`, (_error, stdout, stderr) => {
+    if (stderr) {
+      console.log(stderr)
+      process.exit(1);
+    };
+
     if (stdout) {
+      if (program.report) {
+        console.log(stdout)
+      };
       const vulnerabilities = parseOutput(stdout);
       const totalVulnerabilities =
         vulnerabilities.critical +
@@ -80,17 +97,11 @@ const run = () => {
         vulnerabilities.low;
 
       if (totalVulnerabilities === 0) {
-        if (program.report) {
-          console.log(stdout);
-        }
-        return console.log('\x1b[32m', 'SUCCESS: No vulnerability found');
-      }
-
-      if (program.report) {
-        console.log(stdout);
+        handleNoVulnerabilities();
       }
 
       const severityType = parseMessage(vulnerabilities, program);
+
       switch (severityType) {
         case 'critical':
         case 'high':
@@ -103,18 +114,10 @@ const run = () => {
           return;
         case '':
         default:
-          if (program.report) {
-            console.log(stdout);
-          }
-
-          console.log("\x1b[32m", 'SUCCESS: No vulnerability found');
-
+          handleNoVulnerabilities();
           return;
       }
-    }
-    if (error !== null) {
-      console.log('exec error: ' + error);
-    }
+    };
   });
 };
 
