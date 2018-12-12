@@ -110,7 +110,9 @@ const run = () => {
           const message = `FAILURE: ${totalVulnerabilities} total vulnerability(ies)`;
 
           console.log('\x1b[31m', message);
-          process.exit(1);
+          if (!program.succeed) {
+            process.exit(1);
+          }
           return;
         case '':
         default:
