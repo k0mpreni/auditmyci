@@ -1,6 +1,6 @@
 {
   "name": "auditmyci",
-  "version": "1.2.2-development",
+  "version": "1.2.3-development",
   "description": "Tool to audit dependencies in your CI",
   "main": "index.js",
   "author": "Alex Labonne ",
