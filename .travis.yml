@@ -1,0 +1,25 @@
+language: node_js
+
+node_js:
+  - 12
+  - 10
+
+cache:
+  directories:
+    - node_modules
+
+notifications:
+  email: false
+
+jobs:
+  include:
+    # Define the release stage that runs semantic-release
+    - stage: release
+      node_js: lts/*
+      # Advanced: optionally overwrite your default `script` step to skip the tests
+      script: echo "yarn test temporarily disabled"
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npx semantic-release

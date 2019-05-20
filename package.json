@@ -1,6 +1,6 @@
 {
   "name": "auditmyci",
-  "version": "1.2.1",
+  "version": "1.2.2-development",
   "description": "Tool to audit dependencies in your CI",
   "main": "index.js",
   "author": "Alex Labonne ",
@@ -14,5 +14,12 @@
   },
   "dependencies": {
     "commander": "^2.19.0"
+  },
+  "scripts": {
+    "test": "echo 'yarn test temporarily disabled'",
+    "semantic-release": "semantic-release"
+  },
+  "devDependencies": {
+    "semantic-release": "^15.13.12"
   }
 }
